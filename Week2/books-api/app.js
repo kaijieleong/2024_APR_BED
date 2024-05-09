@@ -1,11 +1,22 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const app = express();
+const validateBook = require("./middlewares/validateBook");
 const port = 3000;
+const express = require("express");
+const booksController = require("./controllers/booksController");
+const sql = require("mssql");
+const dbConfig = require("./dbConfig");
 let books = [
   { id: 1, title: "The Lord of the Rings", author: "J.R.R. Tolkien" },
   { id: 2, title: "Pride and Prejudice", author: "Jane Austen" },
 ];
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
+
+app.get("/books", booksController.getAllBooks);
+app.get("/books/:id", booksController.getBookById);
+app.post("/books", validateBook, booksController.createBook);
 app.listen(port, () => {
   console.log(`Express app listening on port ${port}`);
 });
@@ -59,3 +70,5 @@ app.delete("/books/:id", (req, res) => {
     res.status(404).send("Book not found"); // Send error for non-existent book
   }
 });
+app.post("/books", validateBook, booksController.createBook); // Add validateBook before createBook
+app.put("/books/:id", validateBook, booksController.updateBook); // Add validateBook before updateBook
