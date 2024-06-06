@@ -4,6 +4,8 @@ const sql = require("mssql");
 const dbConfig = require("./dbConfig");
 const bodyParser = require("body-parser"); // Import body-parser
 const validateBook = require("./middlewares/validateBook");
+const usersController = require("./controllers/usersController");
+const validateUser = require("./middlewares/validateUser");
 
 const app = express();
 const port = 3000;
@@ -12,6 +14,12 @@ const port = 3000;
 // Include body-parser middleware to handle JSON data
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true })); // For form data handling
+app.post("/users", validateUser, usersController.createUser); // Create user
+app.get("/users/search", usersController.searchUsers);
+app.get("/users", usersController.getAllUsers); // Get all users
+app.get("/users/:id", usersController.getUserById); // Get user by ID
+app.put("/users/:id", validateUser, usersController.updateUser); // Update user
+app.delete("/users/:id", usersController.deleteUser); // Delete user
 
 app.get("/books", booksController.getAllBooks);
 app.get("/books/:id", booksController.getBookById);
